@@ -153,6 +153,69 @@ export interface ApiWebNewsQuery {
   updatedAt: string;
 }
 
+export interface ApiXConnection {
+  id: string;
+  organizationId: string;
+  platform: "X";
+  label: string;
+  status: "ACTIVE" | "DISABLED" | "ERROR";
+  config?: Record<string, unknown> | null;
+  lastUsedAt?: string | null;
+  expiresAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  hasAccessToken: boolean;
+  hasRefreshToken: boolean;
+  hasBearerToken: boolean;
+  hasApiKey: boolean;
+  hasApiSecret: boolean;
+  maskedBearerToken?: string | null;
+}
+
+export interface ApiXRule {
+  id: string;
+  organizationId: string;
+  name: string;
+  query: string;
+  active: boolean;
+  checkIntervalMinutes: number;
+  lastCheckedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateXConnectionInput {
+  platform?: "X";
+  label: string;
+  bearerToken?: string;
+  accessToken?: string;
+  refreshToken?: string;
+  apiKey?: string;
+  apiSecret?: string;
+  status?: "ACTIVE" | "DISABLED" | "ERROR";
+  config?: Record<string, unknown>;
+  expiresAt?: string;
+  useEnvBearerToken?: boolean;
+}
+
+export interface CreateXRuleInput {
+  name: string;
+  query: string;
+  active?: boolean;
+  checkIntervalMinutes?: number;
+}
+
+export interface XCheckSummary {
+  organizationId: string;
+  checkedAt: string;
+  rulesProcessed: number;
+  createdMentions: number;
+  createdAlerts: number;
+  skippedDuplicates: number;
+  matchedPosts: number;
+  errors: string[];
+}
+
 export interface CreateWebNewsProviderInput {
   provider: ApiWebNewsProvider["provider"];
   label: string;
@@ -376,6 +439,65 @@ export const civicWatchApi = {
     }>(`/organizations/${organizationId}/web-news/queries/${queryId}/check-now`, {
       method: "POST",
       token
+    }),
+  xConnections: (token: string, organizationId: string) =>
+    apiClient<ApiXConnection[]>(`/organizations/${organizationId}/x/connections`, { token }),
+  createXConnection: (
+    token: string,
+    organizationId: string,
+    payload: CreateXConnectionInput
+  ) =>
+    apiClient<ApiXConnection>(`/organizations/${organizationId}/x/connections`, {
+      method: "POST",
+      token,
+      body: JSON.stringify(payload)
+    }),
+  updateXConnection: (
+    token: string,
+    organizationId: string,
+    connectionId: string,
+    payload: Partial<CreateXConnectionInput>
+  ) =>
+    apiClient<ApiXConnection>(`/organizations/${organizationId}/x/connections/${connectionId}`, {
+      method: "PATCH",
+      token,
+      body: JSON.stringify(payload)
+    }),
+  xRules: (token: string, organizationId: string) =>
+    apiClient<ApiXRule[]>(`/organizations/${organizationId}/x/rules`, { token }),
+  createXRule: (token: string, organizationId: string, payload: CreateXRuleInput) =>
+    apiClient<ApiXRule>(`/organizations/${organizationId}/x/rules`, {
+      method: "POST",
+      token,
+      body: JSON.stringify(payload)
+    }),
+  updateXRule: (
+    token: string,
+    organizationId: string,
+    ruleId: string,
+    payload: Partial<CreateXRuleInput>
+  ) =>
+    apiClient<ApiXRule>(`/organizations/${organizationId}/x/rules/${ruleId}`, {
+      method: "PATCH",
+      token,
+      body: JSON.stringify(payload)
+    }),
+  checkXNow: (token: string, organizationId: string, maxResults?: number) =>
+    apiClient<XCheckSummary>(`/organizations/${organizationId}/x/check-now`, {
+      method: "POST",
+      token,
+      body: JSON.stringify(maxResults ? { maxResults } : {})
+    }),
+  checkXRuleNow: (
+    token: string,
+    organizationId: string,
+    ruleId: string,
+    maxResults?: number
+  ) =>
+    apiClient<XCheckSummary>(`/organizations/${organizationId}/x/rules/${ruleId}/check-now`, {
+      method: "POST",
+      token,
+      body: JSON.stringify(maxResults ? { maxResults } : {})
     }),
   crawlSources: (token: string, organizationId: string) =>
     apiClient<ApiCrawlSource[]>(`/organizations/${organizationId}/crawl-sources`, { token }),
