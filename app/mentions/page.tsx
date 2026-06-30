@@ -45,6 +45,12 @@ export default function MentionsPage() {
     loadMentions();
   }, [loadMentions]);
 
+  const handleFiltersChange = useCallback((nextFilters: MentionFilters) => {
+    setFilters((currentFilters) =>
+      areFiltersEqual(currentFilters, nextFilters) ? currentFilters : nextFilters
+    );
+  }, []);
+
   return (
     <ProtectedPage>
       <AppShell
@@ -54,7 +60,7 @@ export default function MentionsPage() {
         {loading ? <LoadingState /> : null}
         {error ? <ErrorState message={error} onRetry={loadMentions} /> : null}
         {!loading && !error ? (
-          <MentionsTable data={mentions} serverMode onFiltersChange={setFilters} />
+          <MentionsTable data={mentions} serverMode onFiltersChange={handleFiltersChange} />
         ) : null}
       </AppShell>
     </ProtectedPage>
@@ -63,4 +69,13 @@ export default function MentionsPage() {
 
 function toBackendValue(value: string) {
   return value.toUpperCase() === "FACEBOOK" ? "FACEBOOK" : value.toUpperCase();
+}
+
+function areFiltersEqual(currentFilters: MentionFilters, nextFilters: MentionFilters) {
+  return (
+    currentFilters.platform === nextFilters.platform &&
+    currentFilters.sentiment === nextFilters.sentiment &&
+    currentFilters.priority === nextFilters.priority &&
+    currentFilters.query === nextFilters.query
+  );
 }
