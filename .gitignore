@@ -1,0 +1,6 @@
+.DS_Store
+.next
+.vercel
+node_modules
+.env.local
+civicwatch-backend
