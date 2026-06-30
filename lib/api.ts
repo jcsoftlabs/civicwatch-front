@@ -69,6 +69,42 @@ interface ApiKeyword {
   active: boolean;
 }
 
+export interface ApiMonitoredProfile {
+  id: string;
+  organizationId: string;
+  displayName: string;
+  profileType: "PERSON" | "COMPANY" | "POLITICAL_PARTY" | "BRAND" | "OTHER";
+  description?: string | null;
+  country: string;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateKeywordInput {
+  monitoredProfileId?: string;
+  keyword: string;
+  keywordType:
+    | "NAME"
+    | "COMPANY"
+    | "PARTY"
+    | "HASHTAG"
+    | "ALIAS"
+    | "SENSITIVE_TOPIC"
+    | "OTHER";
+  priority: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  platforms: Array<"X" | "FACEBOOK" | "INSTAGRAM" | "WEB" | "RSS" | "NEWS" | "CRAWLER">;
+  active?: boolean;
+}
+
+export interface CreateMonitoredProfileInput {
+  displayName: string;
+  profileType: "PERSON" | "COMPANY" | "POLITICAL_PARTY" | "BRAND" | "OTHER";
+  description?: string;
+  country: string;
+  active?: boolean;
+}
+
 export interface ApiRssSource {
   id: string;
   name: string;
@@ -230,6 +266,24 @@ export const civicWatchApi = {
     }),
   keywords: (token: string, organizationId: string) =>
     apiClient<ApiKeyword[]>(`/organizations/${organizationId}/keywords`, { token }),
+  createKeyword: (token: string, organizationId: string, payload: CreateKeywordInput) =>
+    apiClient<ApiKeyword>(`/organizations/${organizationId}/keywords`, {
+      method: "POST",
+      token,
+      body: JSON.stringify(payload)
+    }),
+  monitoredProfiles: (token: string, organizationId: string) =>
+    apiClient<ApiMonitoredProfile[]>(`/organizations/${organizationId}/profiles`, { token }),
+  createMonitoredProfile: (
+    token: string,
+    organizationId: string,
+    payload: CreateMonitoredProfileInput
+  ) =>
+    apiClient<ApiMonitoredProfile>(`/organizations/${organizationId}/profiles`, {
+      method: "POST",
+      token,
+      body: JSON.stringify(payload)
+    }),
   rssSources: (token: string, organizationId: string) =>
     apiClient<ApiRssSource[]>(`/organizations/${organizationId}/rss-sources`, { token }),
   createRssSource: (token: string, organizationId: string, payload: CreateRssSourceInput) =>
