@@ -44,7 +44,7 @@ export function Sidebar({
           <div className="text-xs uppercase tracking-[0.3em] text-blue-200/70">
             Monitoring Politique
           </div>
-          <div className="mt-2 text-2xl font-semibold">CivicWatch Demo</div>
+          <div className="mt-2 text-2xl font-semibold">CivicWatch</div>
         </Link>
 
         <nav className="space-y-2">

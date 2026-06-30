@@ -35,7 +35,7 @@ export default function DashboardPage() {
   return (
     <ProtectedPage>
       <AppShell
-        title="CivicWatch Demo"
+        title="CivicWatch"
         subtitle="Vue d’ensemble du monitoring politique et réputationnel"
       >
         {loading ? <LoadingState /> : null}

@@ -4,9 +4,9 @@ import { AuthProvider } from "@/lib/auth";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "CivicWatch Demo",
+  title: "CivicWatch",
   description:
-    "Dashboard de démonstration pour la surveillance intelligente des mentions publiques sur X et Facebook."
+    "Plateforme de surveillance intelligente des mentions publiques, alertes de crise et veille reputationnelle."
 };
 
 export default function RootLayout({

@@ -19,8 +19,8 @@ function LoginForm() {
   const { login, token } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [email, setEmail] = useState("admin@civicwatch.demo");
-  const [password, setPassword] = useState("Password123!");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -54,11 +54,11 @@ function LoginForm() {
       <Card className="w-full max-w-md border-white/20 bg-white p-6">
         <div>
           <div className="text-sm font-semibold uppercase tracking-[0.25em] text-brand">
-            CivicWatch Demo
+            CivicWatch
           </div>
           <h1 className="mt-3 text-3xl font-semibold text-slate-950">Connexion</h1>
           <p className="mt-2 text-sm leading-6 text-slate-500">
-            Utilisez le compte de démonstration pour accéder aux données PostgreSQL du backend.
+            Connectez-vous a votre espace client pour suivre les mentions, les alertes et la veille de crise.
           </p>
         </div>
 
@@ -80,7 +80,7 @@ function LoginForm() {
               {error}
             </div>
           ) : null}
-          <Button className="w-full" type="button" disabled={loading} onClick={submitLogin}>
+          <Button className="w-full" type="submit" disabled={loading}>
             {loading ? "Connexion..." : "Se connecter"}
           </Button>
         </form>

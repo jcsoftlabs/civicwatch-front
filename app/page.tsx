@@ -30,7 +30,7 @@ export default function HomePage() {
           <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <div>
               <div className="inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-blue-100">
-                CivicWatch Demo • Veille réputationnelle et politique
+                CivicWatch • Veille réputationnelle et politique
               </div>
               <h1 className="mt-6 max-w-3xl text-5xl font-semibold leading-tight tracking-tight sm:text-6xl">
                 Protégez votre réputation publique en temps réel
@@ -83,7 +83,7 @@ export default function HomePage() {
                   Signal prioritaire
                 </div>
                 <p className="mt-2 text-sm leading-6 text-slate-100">
-                  Les mots-clés liés à Horizon et à la campagne 2026 montrent une intensification du sentiment négatif sur X depuis la fin d’après-midi.
+                  Les mots-clés liés à Fritz William Michel, à ses entreprises et à sa communication publique montrent une intensification des signaux à surveiller sur plusieurs canaux.
                 </p>
               </div>
             </Card>
@@ -148,7 +148,7 @@ export default function HomePage() {
               </p>
             </div>
             <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-sm leading-7 text-slate-300">
-              Cette démo utilise des données fictives. Les intégrations réelles dépendent des APIs officielles de X et Meta.
+              Instance de production orientée client. Les résultats dépendent des permissions API, des sources activées et des règles de conformité applicables.
             </div>
           </div>
         </Card>
