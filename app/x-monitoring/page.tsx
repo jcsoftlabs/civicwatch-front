@@ -193,6 +193,18 @@ export default function XMonitoringPage() {
                 <Metric label="Doublons" value={lastCheckSummary.skippedDuplicates} />
                 <Metric label="Posts matchés" value={lastCheckSummary.matchedPosts} />
               </div>
+              {lastCheckSummary.status === "quota_exceeded" ? (
+                <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+                  L’API X a bien été contactée, mais le compte développeur n’a plus de crédits
+                  disponibles pour `Recent Search`.
+                </div>
+              ) : null}
+              {lastCheckSummary.status === "auth_error" ? (
+                <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-900">
+                  L’API X a refusé l’authentification. Vérifiez le bearer token configuré sur
+                  Railway.
+                </div>
+              ) : null}
               {lastCheckSummary.errors.length ? (
                 <p className="mt-4 text-sm text-red-700">{lastCheckSummary.errors.join(" ")}</p>
               ) : null}
@@ -295,7 +307,13 @@ export default function XMonitoringPage() {
                             </Badge>
                           </td>
                           <td className="py-4 pr-4 text-slate-600">
-                            {connection.hasBearerToken ? "Présent" : "Absent"}
+                            {connection.usesEnvBearerToken
+                              ? connection.envBearerTokenAvailable
+                                ? "Token serveur détecté"
+                                : "Variable serveur absente"
+                              : connection.hasBearerToken
+                                ? "Token chiffré présent"
+                                : "Absent"}
                           </td>
                           <td className="py-4 text-slate-600">
                             {connection.lastUsedAt ? formatDateTime(connection.lastUsedAt) : "Jamais"}

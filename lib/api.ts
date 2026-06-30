@@ -169,6 +169,8 @@ export interface ApiXConnection {
   hasBearerToken: boolean;
   hasApiKey: boolean;
   hasApiSecret: boolean;
+  usesEnvBearerToken?: boolean;
+  envBearerTokenAvailable?: boolean;
   maskedBearerToken?: string | null;
 }
 
@@ -214,6 +216,7 @@ export interface XCheckSummary {
   skippedDuplicates: number;
   matchedPosts: number;
   errors: string[];
+  status?: "ok" | "warning" | "quota_exceeded" | "auth_error";
 }
 
 export interface CreateWebNewsProviderInput {
