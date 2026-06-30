@@ -11,6 +11,7 @@ const items = [
   { label: "Mots-clés", href: "/keywords" },
   { label: "Flux RSS", href: "/rss" },
   { label: "Web & News", href: "/web-news" },
+  { label: "Crawling", href: "/crawl-sources" },
   { label: "Rapports", href: "/reports" },
   { label: "Paramètres", href: "/settings" }
 ];

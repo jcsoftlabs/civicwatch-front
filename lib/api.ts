@@ -135,6 +135,33 @@ export interface CreateWebNewsQueryInput {
   checkIntervalMinutes?: number;
 }
 
+export interface ApiCrawlSource {
+  id: string;
+  organizationId: string;
+  name: string;
+  baseUrl: string;
+  startUrls: string[];
+  allowedDomains: string[];
+  active: boolean;
+  respectRobotsTxt: boolean;
+  checkIntervalMinutes: number;
+  maxPagesPerRun: number;
+  lastCrawledAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateCrawlSourceInput {
+  name: string;
+  baseUrl: string;
+  startUrls: string[];
+  allowedDomains: string[];
+  active?: boolean;
+  respectRobotsTxt?: boolean;
+  checkIntervalMinutes?: number;
+  maxPagesPerRun?: number;
+}
+
 export interface ApiReport {
   id: string;
   title: string;
@@ -272,6 +299,32 @@ export const civicWatchApi = {
       matchedResults: number;
       errors: string[];
     }>(`/organizations/${organizationId}/web-news/queries/${queryId}/check-now`, {
+      method: "POST",
+      token
+    }),
+  crawlSources: (token: string, organizationId: string) =>
+    apiClient<ApiCrawlSource[]>(`/organizations/${organizationId}/crawl-sources`, { token }),
+  createCrawlSource: (
+    token: string,
+    organizationId: string,
+    payload: CreateCrawlSourceInput
+  ) =>
+    apiClient<ApiCrawlSource>(`/organizations/${organizationId}/crawl-sources`, {
+      method: "POST",
+      token,
+      body: JSON.stringify(payload)
+    }),
+  checkCrawlSourceNow: (token: string, organizationId: string, sourceId: string) =>
+    apiClient<{
+      sourceId: string;
+      checkedAt: string;
+      pagesVisited: number;
+      pagesSkipped: number;
+      pagesUpdated: number;
+      mentionsCreated: number;
+      alertsCreated: number;
+      errors: string[];
+    }>(`/organizations/${organizationId}/crawl-sources/${sourceId}/check-now`, {
       method: "POST",
       token
     }),
