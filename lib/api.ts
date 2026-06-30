@@ -272,6 +272,11 @@ export const civicWatchApi = {
       token,
       body: JSON.stringify(payload)
     }),
+  deleteKeyword: (token: string, organizationId: string, keywordId: string) =>
+    apiClient<{ success: true }>(`/organizations/${organizationId}/keywords/${keywordId}`, {
+      method: "DELETE",
+      token
+    }),
   monitoredProfiles: (token: string, organizationId: string) =>
     apiClient<ApiMonitoredProfile[]>(`/organizations/${organizationId}/profiles`, { token }),
   createMonitoredProfile: (
@@ -283,6 +288,22 @@ export const civicWatchApi = {
       method: "POST",
       token,
       body: JSON.stringify(payload)
+    }),
+  updateMonitoredProfile: (
+    token: string,
+    organizationId: string,
+    profileId: string,
+    payload: Partial<CreateMonitoredProfileInput>
+  ) =>
+    apiClient<ApiMonitoredProfile>(`/organizations/${organizationId}/profiles/${profileId}`, {
+      method: "PATCH",
+      token,
+      body: JSON.stringify(payload)
+    }),
+  deleteMonitoredProfile: (token: string, organizationId: string, profileId: string) =>
+    apiClient<{ success: true }>(`/organizations/${organizationId}/profiles/${profileId}`, {
+      method: "DELETE",
+      token
     }),
   rssSources: (token: string, organizationId: string) =>
     apiClient<ApiRssSource[]>(`/organizations/${organizationId}/rss-sources`, { token }),

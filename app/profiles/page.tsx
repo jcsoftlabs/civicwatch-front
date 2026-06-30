@@ -42,6 +42,9 @@ export default function ProfilesPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [form, setForm] = useState(initialForm);
+  const [editingProfileId, setEditingProfileId] = useState<string | null>(null);
+  const [savingProfileId, setSavingProfileId] = useState<string | null>(null);
+  const [deletingProfileId, setDeletingProfileId] = useState<string | null>(null);
 
   const loadProfiles = useCallback(() => {
     if (!token || !selectedOrganizationId) return;
@@ -110,6 +113,72 @@ export default function ProfilesPage() {
       setError(err instanceof Error ? err.message : "Impossible d'ajouter le profil surveille.");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const startEditing = (profile: ApiMonitoredProfile) => {
+    setEditingProfileId(profile.id);
+    setForm({
+      displayName: profile.displayName,
+      profileType: profile.profileType,
+      description: profile.description ?? "",
+      country: profile.country,
+      createKeyword: false
+    });
+    setSuccess(null);
+    setError(null);
+  };
+
+  const cancelEditing = () => {
+    setEditingProfileId(null);
+    setForm(initialForm);
+  };
+
+  const saveEditing = async () => {
+    if (!token || !selectedOrganizationId || !editingProfileId) return;
+
+    setSavingProfileId(editingProfileId);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      await civicWatchApi.updateMonitoredProfile(token, selectedOrganizationId, editingProfileId, {
+        displayName: form.displayName,
+        profileType: form.profileType,
+        description: form.description || undefined,
+        country: form.country,
+        active: true
+      });
+      setSuccess("Profil mis a jour.");
+      setEditingProfileId(null);
+      setForm(initialForm);
+      loadProfiles();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Impossible de mettre a jour le profil.");
+    } finally {
+      setSavingProfileId(null);
+    }
+  };
+
+  const removeProfile = async (profileId: string) => {
+    if (!token || !selectedOrganizationId) return;
+
+    setDeletingProfileId(profileId);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      await civicWatchApi.deleteMonitoredProfile(token, selectedOrganizationId, profileId);
+      setSuccess("Profil supprime.");
+      if (editingProfileId === profileId) {
+        setEditingProfileId(null);
+        setForm(initialForm);
+      }
+      loadProfiles();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Impossible de supprimer le profil.");
+    } finally {
+      setDeletingProfileId(null);
     }
   };
 
@@ -210,12 +279,29 @@ export default function ProfilesPage() {
                 Ajoutez ici les entreprises et entites de Fritz. Si la case est activee, leur nom
                 devient automatiquement un critere de surveillance.
               </p>
-              <Button
-                onClick={submit}
-                disabled={submitting || !form.displayName || !form.country}
-              >
-                {submitting ? "Ajout..." : "Ajouter le profil"}
-              </Button>
+              <div className="flex gap-3">
+                {editingProfileId ? (
+                  <Button variant="secondary" onClick={cancelEditing}>
+                    Annuler
+                  </Button>
+                ) : null}
+                <Button
+                  onClick={editingProfileId ? saveEditing : submit}
+                  disabled={
+                    (editingProfileId ? savingProfileId === editingProfileId : submitting) ||
+                    !form.displayName ||
+                    !form.country
+                  }
+                >
+                  {editingProfileId
+                    ? savingProfileId === editingProfileId
+                      ? "Enregistrement..."
+                      : "Enregistrer"
+                    : submitting
+                      ? "Ajout..."
+                      : "Ajouter le profil"}
+                </Button>
+              </div>
             </div>
           </Card>
 
@@ -242,6 +328,7 @@ export default function ProfilesPage() {
                       <th className="px-5 py-3 font-semibold">Type</th>
                       <th className="px-5 py-3 font-semibold">Pays</th>
                       <th className="px-5 py-3 font-semibold">Statut</th>
+                      <th className="px-5 py-3 font-semibold">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -261,6 +348,20 @@ export default function ProfilesPage() {
                           <Badge tone={profile.active ? "resolved" : "neutral"}>
                             {profile.active ? "Actif" : "Inactif"}
                           </Badge>
+                        </td>
+                        <td className="px-5 py-4">
+                          <div className="flex gap-2">
+                            <Button variant="secondary" onClick={() => startEditing(profile)}>
+                              Modifier
+                            </Button>
+                            <Button
+                              variant="danger"
+                              onClick={() => removeProfile(profile.id)}
+                              disabled={deletingProfileId === profile.id}
+                            >
+                              {deletingProfileId === profile.id ? "Suppression..." : "Supprimer"}
+                            </Button>
+                          </div>
                         </td>
                       </tr>
                     ))}
